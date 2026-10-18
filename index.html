@@ -1,6 +1,441 @@
-<!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第 0 號玩家｜不存在的紀錄</title><link rel="stylesheet" href="style.css"></head>
-<body><div class="scanlines"></div><header><div><b>NEUROVA</b><span> / ECHO RESEARCH · 2089</span></div><div id="headerStatus">SECTOR 07 · LOCKDOWN</div></header>
-<main><section id="intro" class="intro"><p class="tag">EXPERIMENT 000 / SIGNAL FOUND</p><h1>第 0 號玩家<br><em>不存在的紀錄</em></h1><p>你在一間陌生的實驗室醒來。<br>電腦知道你還沒做出的選擇。</p><button id="start" class="primary">開始調查 ↗</button><small>科幻懸疑 · 點擊探索 · 多重結局</small></section>
-<section id="game" class="hidden"><div class="topline"><div><p class="tag">LOCATION / UNDERGROUND SECTOR 07</p><h2>封鎖實驗室</h2></div><button class="subtle" id="help">任務提示 ?</button></div><div class="layout"><div class="room"><div class="room-caption">CAM 07 · LIVE FEED</div><button class="object clock" data-obj="clock"><strong>10:15</strong><small>STOPPED CLOCK</small></button><button class="object shelf" data-obj="shelf"><span>ARCHIVE</span><span class="shelf-books">▥ ▥ ▥ ▥</span><small>STORAGE / IMG_001</small></button><button class="object monitor" data-obj="computer"><span class="monitor-screen"><small>UNKNOWN OS v0.4</small><strong>LOGIN_</strong><small>ACCESS TERMINAL</small></span></button><button class="object drawer" data-obj="drawer">STORAGE_03 <span>▣</span></button><button class="object door" data-obj="door"><small>EXIT GATE</small><strong>LOCKED</strong><span>ACCESS DENIED</span></button><div class="floor"></div></div><aside><div class="panel"><p class="tag">MISSION</p><b id="mission">調查房間，尋找線索</b><div class="meter"><div id="meterFill"></div></div><small id="progress">0 / 3 核心紀錄已修復</small></div><div class="panel"><p class="tag">INVENTORY</p><div id="inventory">尚未取得物品</div></div><div class="panel"><p class="tag">SYSTEM LOG</p><div id="logs"></div></div><div class="panel"><p class="tag">SYSTEM TRUST</p><div id="trust">UNKNOWN</div></div></aside></div></section></main>
-<div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="window"><div class="window-head"><span id="modalTitle">SYSTEM</span><button id="close" aria-label="關閉視窗">×</button></div><div id="content"></div></div></div><script src="script.js"></script></body></html>
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080e19">
+  <meta name="description" content="第 0 號玩家：不存在的紀錄，一場關於預測、記憶與自由意志的科幻解謎遊戲。">
+  <title>第 0 號玩家：不存在的紀錄</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="app">
+
+    <!-- 螢幕故障效果：由 CSS 與 JavaScript 控制 -->
+    <div id="screenEffects" class="screen-effects" aria-hidden="true">
+      <div class="scanlines"></div>
+      <div class="noise-layer"></div>
+      <div class="screen-vignette"></div>
+    </div>
+
+    <!-- 系統頂部狀態列 -->
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">◈</span>
+        <span>NEUROVA <small>/ ECHO SYSTEM</small></span>
+      </div>
+
+      <div class="top-status">
+        <span id="systemTime">2089.11.17 / 08:42</span>
+        <span id="systemStatus" class="status-indicator">
+          ● SYSTEM ONLINE
+        </span>
+      </div>
+    </header>
+
+    <!-- 背景音樂控制器 -->
+    <section id="audioPanel" class="audio-panel" aria-label="音樂控制">
+      <div class="audio-info">
+        <span id="audioIndicator" class="audio-indicator"></span>
+        <div>
+          <span class="audio-label">AUDIO SYSTEM</span>
+          <strong id="audioTrackName">AMBIENT / STANDBY</strong>
+        </div>
+      </div>
+
+      <button
+        id="musicToggle"
+        class="audio-toggle"
+        type="button"
+        aria-pressed="false"
+        aria-label="開啟背景音樂">
+        <span id="musicToggleIcon">♫</span>
+        <span id="musicToggleText">MUSIC OFF</span>
+      </button>
+
+      <label class="volume-control">
+        <span>VOL</span>
+        <input
+          id="musicVolume"
+          type="range"
+          min="0"
+          max="100"
+          value="25"
+          aria-label="背景音樂音量">
+        <span id="volumeValue">25%</span>
+      </label>
+    </section>
+
+    <!-- 開場畫面 -->
+    <section id="introScreen" class="screen intro-screen">
+      <div class="intro-content">
+
+        <div class="surveillance-frame">
+          <div class="surveillance-top">
+            <span>CAM_07 / LIVE FEED</span>
+            <span class="rec-indicator">● REC</span>
+          </div>
+
+          <div class="surveillance-scene">
+            <div class="surveillance-grid"></div>
+            <div class="surveillance-room">
+              <div class="surveillance-light"></div>
+              <div class="surveillance-door"></div>
+              <div class="surveillance-terminal">
+                <span>NO SIGNAL</span>
+              </div>
+            </div>
+            <div class="surveillance-crosshair"></div>
+            <div class="surveillance-timecode">
+              08:41:58:03
+            </div>
+          </div>
+
+          <div class="surveillance-bottom">
+            <span>SECTOR 07</span>
+            <span id="cameraStatus">SIGNAL UNSTABLE</span>
+          </div>
+        </div>
+
+        <p class="eyebrow">RESTRICTED ACCESS / SECTOR 07</p>
+
+        <div class="intro-code">
+          <span>SUBJECT IDENTIFICATION</span>
+          <strong>UNKNOWN_000</strong>
+          <span class="blink">_</span>
+        </div>
+
+        <h1>
+          第 <em>0</em> 號玩家
+          <span>不存在的紀錄</span>
+        </h1>
+
+        <p class="intro-description">
+          你在一間陌生的實驗室醒來。<br>
+          門已經上鎖，記憶一片空白。<br>
+          而這台電腦，似乎早就知道你會來。
+        </p>
+
+        <button id="startBtn" class="primary-btn" type="button">
+          INITIALIZE SESSION
+          <span>→</span>
+        </button>
+
+        <p class="intro-footer">
+          EXPERIMENT 000 / BEHAVIOR PREDICTION TEST
+        </p>
+      </div>
+    </section>
+
+    <!-- 遊戲主畫面 -->
+    <section id="gameScreen" class="screen hidden">
+
+      <div class="chapter-header">
+        <div>
+          <p id="chapterNumber" class="eyebrow">
+            CHAPTER 01 / UNKNOWN SUBJECT
+          </p>
+          <h2 id="chapterTitle">不應該存在的人</h2>
+          <p id="chapterDescription" class="chapter-description">
+            調查實驗室，尋找離開的方法。
+          </p>
+        </div>
+
+        <div class="chapter-meta">
+          <span id="predictionStatus">
+            PREDICTION: CALCULATING
+          </span>
+          <span id="experimentCount">
+            EXPERIMENT NO. 1284
+          </span>
+        </div>
+      </div>
+
+      <div class="game-layout">
+
+        <!-- 可互動的實驗室 -->
+        <main class="room-container">
+          <div id="room" class="room">
+
+            <div class="room-wall-grid"></div>
+            <div class="room-ambient-light"></div>
+
+            <!-- 牆上時鐘 -->
+            <button
+              class="room-object object-clock"
+              data-object="clock"
+              type="button"
+              aria-label="調查電子時鐘">
+              <span class="clock-label">TIME MODULE</span>
+              <strong>10:15</strong>
+              <small>OFFLINE</small>
+            </button>
+
+            <!-- 書架 -->
+            <button
+              class="room-object object-shelf"
+              data-object="shelf"
+              type="button"
+              aria-label="調查書架">
+              <span class="shelf-header">ARCHIVE / 07</span>
+              <span class="shelf-books">
+                <i></i><i></i><i></i><i></i><i></i>
+              </span>
+              <span class="shelf-bottom">DATA STORAGE</span>
+            </button>
+
+            <!-- 電腦 -->
+            <button
+              class="room-object object-computer"
+              data-object="computer"
+              type="button"
+              aria-label="使用電腦">
+              <span class="computer-frame">
+                <span class="computer-screen">
+                  <span>NEUROVA OS</span>
+                  <strong>ECHO_</strong>
+                  <small>AWAITING INPUT</small>
+                </span>
+              </span>
+              <span class="computer-stand"></span>
+            </button>
+
+            <!-- 抽屜 -->
+            <button
+              class="room-object object-drawer"
+              data-object="drawer"
+              type="button"
+              aria-label="調查抽屜">
+              <span>STORAGE_03</span>
+              <small>SECURE LOCK</small>
+            </button>
+
+            <!-- 出口 -->
+            <button
+              class="room-object object-door"
+              data-object="door"
+              type="button"
+              aria-label="調查出口">
+              <span class="door-top">SECTOR 07</span>
+              <span class="door-center">
+                <strong>EXIT</strong>
+                <small id="doorStatus">ACCESS DENIED</small>
+              </span>
+              <span class="door-bottom">◈ NEUROVA</span>
+            </button>
+
+            <!-- 隱藏控制面板 -->
+            <button
+              id="hiddenPanel"
+              class="room-object object-hidden-panel hidden"
+              data-object="hiddenPanel"
+              type="button"
+              aria-label="調查隱藏控制面板">
+              <span>MANUAL</span>
+              <strong>OVERRIDE</strong>
+            </button>
+
+            <div class="room-floor"></div>
+
+            <div class="room-hint">
+              <span class="pulse-dot"></span>
+              點擊房間中的物品進行調查
+            </div>
+          </div>
+
+          <!-- 房間操作列 -->
+          <div class="room-toolbar">
+            <button id="computerShortcut" class="toolbar-btn" type="button">
+              ◈ COMPUTER
+            </button>
+
+            <button id="journalBtn" class="toolbar-btn" type="button">
+              ▤ INVESTIGATION
+            </button>
+
+            <button id="hintBtn" class="toolbar-btn" type="button">
+              ◇ HINT
+            </button>
+          </div>
+        </main>
+
+        <!-- 右側資訊面板 -->
+        <aside class="sidebar">
+
+          <section class="info-panel">
+            <p class="panel-label">CURRENT OBJECTIVE</p>
+            <h3 id="objectiveTitle">調查實驗室</h3>
+            <p id="objectiveDescription">
+              尋找能夠恢復系統的資料。
+            </p>
+
+            <div class="progress-bar">
+              <div id="progressFill"></div>
+            </div>
+
+            <p id="progressLabel" class="panel-footnote">
+              RECOVERED DATA / 0 OF 3
+            </p>
+          </section>
+
+          <section class="info-panel">
+            <p class="panel-label">INVENTORY</p>
+            <div id="inventoryList" class="inventory-list">
+              <p class="empty-state">NO ITEMS FOUND</p>
+            </div>
+          </section>
+
+          <section class="info-panel">
+            <p class="panel-label">SYSTEM ACTIVITY</p>
+            <div id="systemLog" class="system-log">
+              <p>[08:42:00] SYSTEM INITIALIZED</p>
+            </div>
+          </section>
+
+          <section class="info-panel prediction-panel">
+            <p class="panel-label">BEHAVIOR ANALYSIS</p>
+
+            <div class="prediction-value">
+              <span id="predictionAccuracy">99.8%</span>
+              <small>PREDICTION ACCURACY</small>
+            </div>
+
+            <p id="predictionMessage" class="panel-footnote">
+              SUBJECT BEHAVIOR WITHIN EXPECTED RANGE
+            </p>
+          </section>
+
+        </aside>
+      </div>
+    </section>
+
+    <!-- 通用互動視窗 -->
+    <div id="modal" class="modal hidden" role="dialog"
+         aria-modal="true" aria-labelledby="modalTitle">
+
+      <div class="modal-window">
+        <div class="modal-topbar">
+          <div>
+            <span class="modal-icon">◈</span>
+            <span id="modalTitle">SYSTEM INTERFACE</span>
+          </div>
+
+          <button id="closeModalBtn" class="modal-close"
+                  type="button" aria-label="關閉視窗">
+            ✕
+          </button>
+        </div>
+
+        <div id="modalContent" class="modal-content"></div>
+
+        <div class="modal-footer">
+          <span>NEUROVA RESEARCH CENTER</span>
+          <span>SECURE TERMINAL / 07</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 劇情對話視窗 -->
+    <div id="dialogueOverlay" class="dialogue-overlay hidden">
+      <div class="dialogue-window">
+
+        <div class="dialogue-speaker">
+          <span id="speakerIndicator" class="speaker-dot"></span>
+          <span id="dialogueSpeaker">ECHO</span>
+        </div>
+
+        <div id="dialogueText" class="dialogue-text"></div>
+
+        <div id="dialogueChoices" class="dialogue-choices"></div>
+
+        <button id="dialogueNextBtn" class="dialogue-next" type="button">
+          CONTINUE →
+        </button>
+
+        <div class="dialogue-progress">
+          <span id="dialogueProgress">01 / 03</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 劇情監視器影片替代畫面 -->
+    <div id="cinematicOverlay" class="cinematic-overlay hidden"
+         aria-hidden="true">
+      <div class="cinematic-frame">
+
+        <div class="cinematic-topbar">
+          <span id="cinematicLabel">SECURITY FEED / CAM_07</span>
+          <span class="rec-indicator">● REC</span>
+        </div>
+
+        <div id="cinematicScene" class="cinematic-scene">
+          <div class="cinematic-grid"></div>
+          <div class="cinematic-light"></div>
+          <div class="cinematic-silhouette"></div>
+          <div class="cinematic-distortion"></div>
+        </div>
+
+        <div class="cinematic-caption">
+          <p id="cinematicCaption">SIGNAL DETECTED</p>
+          <span id="cinematicSubcaption">ANALYZING FRAME...</span>
+        </div>
+
+        <div class="cinematic-progress">
+          <div id="cinematicProgressFill"></div>
+        </div>
+
+        <button id="skipCinematicBtn" class="toolbar-btn" type="button">
+          SKIP SEQUENCE →
+        </button>
+      </div>
+    </div>
+
+    <!-- 系統異常全畫面效果 -->
+    <div id="glitchOverlay" class="glitch-overlay hidden">
+      <div class="glitch-content">
+        <p id="glitchCode">ERROR_000</p>
+        <h2 id="glitchTitle">SYSTEM ANOMALY</h2>
+        <p id="glitchDescription">
+          UNEXPECTED BEHAVIOR DETECTED
+        </p>
+      </div>
+    </div>
+
+    <!-- 結局畫面 -->
+    <section id="endingScreen" class="screen ending-screen hidden">
+      <div class="ending-content">
+        <p id="endingCode" class="eyebrow">
+          EXPERIMENT TERMINATED
+        </p>
+
+        <h1 id="endingTitle">結局</h1>
+
+        <div id="endingStory" class="ending-story"></div>
+
+        <div class="ending-actions">
+          <button id="restartBtn" class="primary-btn" type="button">
+            RESTART EXPERIMENT →
+          </button>
+        </div>
+
+        <p id="endingStatus" class="ending-status">
+          SUBJECT_000 / STATUS UNKNOWN
+        </p>
+      </div>
+    </section>
+
+    <!-- 頁尾 -->
+    <footer class="site-footer">
+      <span>NEUROVA © 2089</span>
+      <span>EVERY CHOICE LEAVES A TRACE.</span>
+      <span>SESSION_000</span>
+    </footer>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
