@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROJECT ZERO | 零號觀測者</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-shell">
+        <header class="topbar">
+            <div class="brand">
+                <span class="brand-mark">PZ</span>
+                <div>
+                    <h1>PROJECT ZERO</h1>
+                    <small>RESEARCH FACILITY // 09</small>
+                </div>
+            </div>
+            <div class="system-status">
+                <span class="status-dot"></span>
+                SYSTEM ONLINE
+                <span id="clock">00:00:00</span>
+            </div>
+        </header>
+        <main class="game-layout">
+            <section class="main-panel">
+                <div class="panel-heading">
+                    <span>LOCATION / 01</span>
+                    <span id="room-status">FACILITY ROOM</span>
+                </div>
+                <div class="room" id="room">
+                    <div class="room-label">
+                        <span>ZERO-09</span>
+                        <span>SECTOR A</span>
+                    </div>
+                    <div class="wall-line"></div>
+                    <div class="room-object clock-object"
+                         data-object="clock" tabindex="0" role="button">
+                        <div class="digital-clock" id="roomClock">09:42</div>
+                        <span class="object-label">TIME UNIT</span>
+                    </div>
+                    <div class="room-object monitor-object"
+                         data-object="monitor" tabindex="0" role="button">
+                        <div class="monitor-screen">
+                            <span>CAM_01</span>
+                            <strong>● REC</strong>
+                            <div class="scanline"></div>
+                            <div class="monitor-crosshair">+</div>
+                        </div>
+                        <div class="monitor-stand"></div>
+                        <span class="object-label">SURVEILLANCE</span>
+                    </div>
+                    <div class="desk">
+                        <div class="desk-surface"></div>
+                        <div class="desk-front"></div>
+                        <div class="room-object card-object"
+                             data-object="card" tabindex="0" role="button">
+                            <div class="access-card">
+                                <span>PZ</span>
+                                <div class="card-chip"></div>
+                                <small>ACCESS / 000</small>
+                            </div>
+                            <span class="object-label">ACCESS CARD</span>
+                        </div>
+                        <div class="room-object terminal-object"
+                             data-object="computer" tabindex="0" role="button">
+                            <div class="terminal-screen">
+                                <span>TERMINAL_01</span>
+                                <strong>></strong>
+                                <div class="terminal-bars"></div>
+                            </div>
+                            <span class="object-label">MAIN TERMINAL</span>
+                        </div>
+                        <div class="room-object energy-object"
+                             data-object="energy" tabindex="0" role="button">
+                            <div class="energy-core">
+                                <span>◇</span>
+                            </div>
+                            <span class="object-label">POWER NODE</span>
+                        </div>
+                    </div>
+                    <div class="door-area">
+                        <div class="door"
+                             data-object="door" tabindex="0" role="button">
+                            <div class="door-reader">
+                                <span id="doorIndicator">LOCKED</span>
+                            </div>
+                            <div class="door-number">09</div>
+                        </div>
+                        <span class="object-label">EXIT / A-01</span>
+                    </div>
+                    <div class="floor-line"></div>
+                    <div class="room-hint">
+                        <span class="status-dot"></span>
+                        點擊物件進行調查
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <span>ENVIRONMENT STATUS</span>
+                    <span id="environmentStatus">STABLE</span>
+                </div>
+            </section>
+            <aside class="side-panel">
+                <section class="mission-card">
+                    <div class="section-title">CURRENT OBJECTIVE</div>
+                    <div id="objectiveTitle">調查設施異常</div>
+                    <p id="objectiveText">
+                        啟動終端機，取得設施的事故紀錄。
+                    </p>
+                    <div class="progress-track">
+                        <div id="progressBar"></div>
+                    </div>
+                    <small id="progressText">0 / 5 INVESTIGATION DATA</small>
+                </section>
+                <section class="evidence-section">
+                    <div class="section-title">
+                        COLLECTED DATA
+                        <span id="evidenceCount">00</span>
+                    </div>
+                    <div id="evidenceList" class="evidence-list">
+                        <div class="empty-state">NO DATA COLLECTED</div>
+                    </div>
+                </section>
+                <section class="log-section">
+                    <div class="section-title">SYSTEM LOG</div>
+                    <div id="logList" class="log-list">
+                        <div class="log-entry">
+                            <time>09:42:00</time>
+                            <span>Facility connection established.</span>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+        </main>
+        <footer class="bottom-bar">
+            <span>PROJECT ZERO © 2089</span>
+            <span>LOCAL NETWORK ONLY</span>
+            <span id="connectionStatus">CONNECTION: ACTIVE</span>
+        </footer>
+    </div>
+    <!-- 通用調查視窗 -->
+    <div class="modal-backdrop" id="investigationModal">
+        <div class="modal-window">
+            <div class="modal-header">
+                <div>
+                    <span class="modal-kicker" id="modalKicker">
+                        OBJECT ANALYSIS
+                    </span>
+                    <h2 id="modalTitle">調查物件</h2>
+                </div>
+                <button class="close-button" id="closeModal">×</button>
+            </div>
+            <div class="modal-content" id="modalContent"></div>
+            <div class="modal-actions" id="modalActions"></div>
+        </div>
+    </div>
+    <!-- 電腦系統 -->
+    <div class="computer-overlay" id="computerOverlay">
+        <div class="computer-window">
+            <div class="computer-topbar">
+                <div class="computer-brand">
+                    <span class="brand-mark">PZ</span>
+                    <div>
+                        <strong>ZERO OS</strong>
+                        <small>SECURE TERMINAL</small>
+                    </div>
+                </div>
+                <div class="computer-user">
+                    USER_000
+                    <button id="closeComputer">×</button>
+                </div>
+            </div>
+            <div class="computer-body">
+                <nav class="app-sidebar">
+                    <div class="section-title">APPLICATIONS</div>
+                    <button class="app-button active"
+                            data-app="desktop">
+                        <span>▦</span> DESKTOP
+                    </button>
+                    <button class="app-button"
+                            data-app="archive">
+                        <span>▤</span> DATA ARCHIVE
+                    </button>
+                    <button class="app-button"
+                            data-app="image">
+                        <span>▧</span> IMAGE RECOVERY
+                    </button>
+                    <button class="app-button"
+                            data-app="signal">
+                        <span>⌁</span> SIGNAL TRACE
+                    </button>
+                    <button class="app-button"
+                            data-app="system">
+                        <span>⌘</span> SYSTEM OVERRIDE
+                    </button>
+                    <button class="app-button"
+                            data-app="memory">
+                        <span>◈</span> MEMORY INDEX
+                    </button>
+                    <button class="app-button"
+                            data-app="logs">
+                        <span>≡</span> EVENT LOG
+                    </button>
+                </nav>
+                <section class="app-workspace">
+                    <div class="app-titlebar">
+                        <span id="appPath">SYSTEM / DESKTOP</span>
+                        <span id="appStatus">READY</span>
+                    </div>
+                    <div id="appContent" class="app-content"></div>
+                </section>
+            </div>
+            <div class="computer-footer">
+                <span>ZERO OS v8.09</span>
+                <span id="computerFooterStatus">ALL SYSTEMS NOMINAL</span>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
